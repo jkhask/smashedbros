@@ -9,13 +9,15 @@
         <input matInput placeholder="Main (select below)" formControlName="main" readonly>
     </mat-form-field>
     <div class="fighters">
-        <button mat-button type="button" *ngFor="let fighter of fighters" (click)="chooseFighter(fighter)" class="fighter"><img
-                [src]="'assets/smash-icons/'+fighter.icon+'.png'">
+        <button mat-button type="button" *ngFor="let fighter of filteredFighters" (click)="chooseFighter(fighter)" class="fighter"><img
+                [src]="'assets/smash-icons/'+fighter.icon+'.png'"
+                [matTooltip]="fighter.name"
+                matTooltipPosition="above">
         </button>
     </div>
-    <!-- <mat-form-field>
-        <input matInput placeholder="filter" [(ngModel)]="filter" (keyup)="filterFighters">
-    </mat-form-field> -->
+    <mat-form-field>
+        <input matInput placeholder="filter" (keyup)="filterFighters($event)">
+    </mat-form-field>
 
     <div class="buttons">
         <button mat-raised-button color="primary" type="submit" [disabled]="!playerForm.valid">Add</button>

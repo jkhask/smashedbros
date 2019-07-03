@@ -1,26 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, FormControl, Validators} from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  Validators,
+} from '@angular/forms';
 import { GameService, Player } from './game.service';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
 import { AddPlayerComponent } from './add-player/add-player.component';
+import { DocumentChangeAction } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   gameInput: FormGroup;
   gameInfo: any;
-  players$: Observable<Player[]>;
+  players$: Observable<DocumentChangeAction<Player>[]>;
 
   constructor(
     private fb: FormBuilder,
     private game: GameService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    ) {}
+  ) {}
 
   async ngOnInit() {
     this.players$ = this.game.getPlayers();
@@ -59,12 +65,19 @@ export class AppComponent implements OnInit {
 
   openAddPlayer(): void {
     const dialogRef = this.dialog.open(AddPlayerComponent, {
-      // width: '250px',
-      data: {}
+      width: '80%',
+      data: {},
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+    });
+  }
+
+  async deletePlayer(player) {
+    await this.game.deletePlayer(player);
+    this.snackBar.open('Player deleted', 'Ok', {
+      duration: 2000,
     });
   }
 }

@@ -1,28 +1,34 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  FormControl,
+  Validators,
+} from '@angular/forms';
 import { fighters, Fighter } from '../../assets/fighters';
 import { Player, GameService } from '../game.service';
 
 @Component({
   selector: 'app-add-player',
   templateUrl: './add-player.component.html',
-  styleUrls: ['./add-player.component.scss']
+  styleUrls: ['./add-player.component.scss'],
 })
-
 export class AddPlayerComponent implements OnInit {
-
   playerForm: FormGroup;
   fighters: Fighter[];
+  filteredFighters: Fighter[];
 
   constructor(
     private fb: FormBuilder,
     private game: GameService,
     public dialogRef: MatDialogRef<AddPlayerComponent>,
-    @Inject(MAT_DIALOG_DATA) public data) { }
+    @Inject(MAT_DIALOG_DATA) public data,
+  ) {}
 
   ngOnInit(): void {
     this.fighters = fighters;
+    this.filteredFighters = fighters;
     this.playerForm = this.fb.group({
       hideRequired: false,
       floatLabel: 'auto',
@@ -56,4 +62,9 @@ export class AddPlayerComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  filterFighters(e) {
+    this.filteredFighters = this.fighters.filter(
+      fighter => fighter.name.toLowerCase().indexOf(e.target.value) > -1,
+    );
+  }
 }
