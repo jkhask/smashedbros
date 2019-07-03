@@ -1,31 +1,41 @@
-<mat-toolbar>Smashed Bros</mat-toolbar>
+<mat-toolbar>
+  <span>Smashed Bros</span>
+  <span class="spacer"></span>
+  <button mat-button>Add Player</button>
+</mat-toolbar>
 <div class="content-wrapper">
-  <div class="content">
-    <form [formGroup]="gameInput" (ngSubmit)="submit()">
-      <mat-form-field>
-        <input matInput placeholder="Player 1" formControlName="player1">
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Player 1 Score" type="number" formControlName="scorePlayer1">
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Player 2" formControlName="player2">
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Player 2 Score" type="number" formControlName="scorePlayer2">
-      </mat-form-field>
-      <div class="buttons">
-          <button mat-raised-button (click)="gameInput.reset()" type="button">Reset</button>
-          <button mat-raised-button color="accent" (click)="loadCurrentGame()" type="button">Load Current</button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="!gameInput.valid">Submit</button>
-      </div>
-    </form>
-    <div class="endpoints">
-      <h4>Endpoints</h4>
-      <span>https://us-east1-smashedbros-43505.cloudfunctions.net/player1</span>
-      <span>https://us-east1-smashedbros-43505.cloudfunctions.net/player2</span>
-      <span>https://us-east1-smashedbros-43505.cloudfunctions.net/scorePlayer1</span>
-      <span>https://us-east1-smashedbros-43505.cloudfunctions.net/scorePlayer2</span>
+  <div class="players">
+      <mat-card class="player" *ngFor="let player of players$ | async">
+        <span>{{player.name}}</span>
+        <span>{{player.points}}</span>
+      </mat-card>
+  </div>
+  <form [formGroup]="gameInput" (ngSubmit)="submit()">
+    <mat-form-field>
+      <input matInput placeholder="Player 1" formControlName="player1">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Player 1 Score" type="number" formControlName="scorePlayer1">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Player 2" formControlName="player2">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Player 2 Score" type="number" formControlName="scorePlayer2">
+    </mat-form-field>
+    <div class="buttons">
+      <button mat-raised-button (click)="gameInput.reset()" type="button">Reset</button>
+      <button mat-raised-button color="accent" (click)="loadCurrentGame()" type="button">Load Current</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!gameInput.valid">Submit</button>
     </div>
+  </form>
+  <div class="endpoints">
+    <h4>Endpoints</h4>
+    <ul>
+      <li>https://us-east1-smashedbros-43505.cloudfunctions.net/player1</li>
+      <li>https://us-east1-smashedbros-43505.cloudfunctions.net/player2</li>
+      <li>https://us-east1-smashedbros-43505.cloudfunctions.net/scorePlayer1</li>
+      <li>https://us-east1-smashedbros-43505.cloudfunctions.net/scorePlayer2</li>
+    </ul>
   </div>
 </div>

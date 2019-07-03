@@ -3,6 +3,8 @@ import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore'
 import { map, first } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
+export interface Player { name: string; points: number; }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,8 +14,7 @@ export class GameService {
 
   getCurrentGame(): Observable<any> {
     return this.firestore.collection('game-info').doc('values').get()
-    .pipe(map((res) => res.data()))
-    .pipe(first());
+      .pipe(map((res) => res.data()));
   }
 
   updateGame(values): Promise<void> {
@@ -26,5 +27,9 @@ export class GameService {
         scorePlayer1: values.scorePlayer1,
         scorePlayer2: values.scorePlayer2,
       }, { merge: true });
+  }
+
+  getPlayers(): Observable<Player[]> {
+    return this.firestore.collection<Player>('players').valueChanges();
   }
 }

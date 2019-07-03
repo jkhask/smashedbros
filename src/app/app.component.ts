@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, FormControl, Validators} from '@angular/forms';
-import { GameService } from './game.service';
+import { GameService, Player } from './game.service';
 import { MatSnackBar } from '@angular/material';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +12,12 @@ import { MatSnackBar } from '@angular/material';
 export class AppComponent implements OnInit {
   gameInput: FormGroup;
   gameInfo: any;
+  players$: Observable<Player[]>;
 
   constructor(private fb: FormBuilder, private game: GameService, private snackBar: MatSnackBar) {}
 
   async ngOnInit() {
+    this.players$ = this.game.getPlayers();
     this.gameInput = this.fb.group({
       hideRequired: false,
       floatLabel: 'auto',
