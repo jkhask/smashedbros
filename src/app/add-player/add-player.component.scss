@@ -1,0 +1,18 @@
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.fighters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.buttons {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row-reverse;
+}

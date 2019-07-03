@@ -8,10 +8,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AddPlayerComponent } from './add-player/add-player.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AddPlayerComponent
+  ],
+  entryComponents: [
+    AddPlayerComponent
   ],
   imports: [
     BrowserModule,

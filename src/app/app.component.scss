@@ -6,10 +6,18 @@
     padding: 1rem;
     .players {
         display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         .player {
             margin: 1rem;
-            display: flex;
-            flex-direction: column;
+            width: 180px;
+            .mat-card-avatar{
+                background-size: contain;
+            }
+            .mat-chip-list {
+                display: flex;
+                justify-content: center;
+            }
         }
     }
     form {

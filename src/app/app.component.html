@@ -1,14 +1,22 @@
 <mat-toolbar>
   <span>Smashed Bros</span>
   <span class="spacer"></span>
-  <button mat-button>Add Player</button>
+  <button mat-button (click)="openAddPlayer()">Add Player</button>
 </mat-toolbar>
 <div class="content-wrapper">
   <div class="players">
-      <mat-card class="player" *ngFor="let player of players$ | async">
-        <span>{{player.name}}</span>
-        <span>{{player.points}}</span>
-      </mat-card>
+    <mat-card class="player" *ngFor="let player of players$ | async">
+      <mat-card-header>
+        <div mat-card-avatar [style.background-image]="'url(assets/smash-icons/' + player.main.icon + '.png)'"></div>
+        <mat-card-title>{{player.tag}}</mat-card-title>
+        <mat-card-subtitle>{{player.name}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-list>
+          <mat-chip>{{player.elo}}</mat-chip>
+        </mat-chip-list>
+      </mat-card-content>
+    </mat-card>
   </div>
   <form [formGroup]="gameInput" (ngSubmit)="submit()">
     <mat-form-field>

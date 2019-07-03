@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
-import { map, first } from 'rxjs/operators';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-export interface Player { name: string; points: number; }
+export interface Player { name: string; tag: string; elo: number; main: {name: string, icon: string}; }
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +31,9 @@ export class GameService {
 
   getPlayers(): Observable<Player[]> {
     return this.firestore.collection<Player>('players').valueChanges();
+  }
+
+  addPlayer(player): Promise<firebase.firestore.DocumentReference> {
+    return this.firestore.collection<Player>('players').add(player);
   }
 }

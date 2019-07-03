@@ -1,0 +1,23 @@
+<form [formGroup]="playerForm" (ngSubmit)="submit()">
+    <mat-form-field>
+        <input matInput placeholder="Tag" formControlName="tag">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Name" formControlName="name">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Main (select below)" formControlName="main" readonly>
+    </mat-form-field>
+    <div class="fighters">
+        <button mat-button type="button" *ngFor="let fighter of fighters" (click)="chooseFighter(fighter)" class="fighter"><img
+                [src]="'assets/smash-icons/'+fighter.icon+'.png'">
+        </button>
+    </div>
+    <!-- <mat-form-field>
+        <input matInput placeholder="filter" [(ngModel)]="filter" (keyup)="filterFighters">
+    </mat-form-field> -->
+
+    <div class="buttons">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!playerForm.valid">Add</button>
+    </div>
+</form>

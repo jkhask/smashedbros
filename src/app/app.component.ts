@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, FormControl, Validators} from '@angular/forms';
 import { GameService, Player } from './game.service';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
+import { AddPlayerComponent } from './add-player/add-player.component';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,12 @@ export class AppComponent implements OnInit {
   gameInfo: any;
   players$: Observable<Player[]>;
 
-  constructor(private fb: FormBuilder, private game: GameService, private snackBar: MatSnackBar) {}
+  constructor(
+    private fb: FormBuilder,
+    private game: GameService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    ) {}
 
   async ngOnInit() {
     this.players$ = this.game.getPlayers();
@@ -48,6 +54,17 @@ export class AppComponent implements OnInit {
     await this.game.updateGame(payload);
     this.snackBar.open('Updated game!', 'Ok', {
       duration: 2000,
+    });
+  }
+
+  openAddPlayer(): void {
+    const dialogRef = this.dialog.open(AddPlayerComponent, {
+      // width: '250px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
     });
   }
 }
