@@ -15,6 +15,8 @@ import { Player, GameService } from '../game.service';
   styleUrls: ['./add-player.component.scss'],
 })
 export class AddPlayerComponent implements OnInit {
+
+  buttonText: string;
   playerForm: FormGroup;
   fighters: Fighter[];
   filteredFighters: Fighter[];
@@ -37,6 +39,16 @@ export class AddPlayerComponent implements OnInit {
       main: new FormControl('', [Validators.required]),
       icon: new FormControl('', [Validators.required]),
     });
+    if (this.data.player) {
+      const { doc } = this.data.player.payload;
+      this.playerForm.get('tag').setValue(doc.data().tag);
+      this.playerForm.get('name').setValue(doc.data().name);
+      this.playerForm.get('main').setValue(doc.data().main.name);
+      this.playerForm.get('icon').setValue(doc.data().main.icon);
+      this.buttonText = 'Update';
+    } else {
+      this.buttonText = 'Add';
+    }
   }
 
   chooseFighter(fighter: Fighter) {
@@ -49,7 +61,7 @@ export class AddPlayerComponent implements OnInit {
   }
 
   async submit() {
-    const player: Player = {
+    const incomingPlayer: Player = {
       name: this.playerForm.get('name').value,
       tag: this.playerForm.get('tag').value,
       main: {
@@ -58,7 +70,12 @@ export class AddPlayerComponent implements OnInit {
       },
       elo: 1000,
     };
-    await this.game.addPlayer(player);
+    if (this.data.player) { // player info was sent into modal, we are doing an edit
+      delete incomingPlayer.elo;
+      await this.game.updatePlayer(this.data.player, incomingPlayer);
+    } else {
+      await this.game.addPlayer(incomingPlayer);
+    }
     this.dialogRef.close();
   }
 

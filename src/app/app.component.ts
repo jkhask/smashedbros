@@ -10,6 +10,7 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
 import { AddPlayerComponent } from './add-player/add-player.component';
 import { DocumentChangeAction } from '@angular/fire/firestore';
+import { ConfirmComponent } from './confirm/confirm.component';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,7 @@ export class AppComponent implements OnInit {
     private game: GameService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.players$ = this.game.getPlayers();
@@ -63,21 +64,30 @@ export class AppComponent implements OnInit {
     });
   }
 
-  openAddPlayer(): void {
+  openAddPlayer(player?: Player): void {
     const dialogRef = this.dialog.open(AddPlayerComponent, {
-      width: '80%',
-      data: {},
+      width: '70%',
+      data: {player: player ? player : undefined},
+    });
+  }
+
+  confirmDeletePlayer(player: Player): void {
+    const deletePlayer = async (player) => {
+      await this.game.deletePlayer(player);
+      this.snackBar.open('Player deleted', 'Ok', {
+        duration: 2000,
+      });
+    }
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: '250px',
+      data: { message: 'Are you sure you want to delete this player?' },
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      if (result) {
+        deletePlayer(player);
+      }
     });
   }
 
-  async deletePlayer(player) {
-    await this.game.deletePlayer(player);
-    this.snackBar.open('Player deleted', 'Ok', {
-      duration: 2000,
-    });
-  }
 }

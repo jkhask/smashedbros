@@ -17,7 +17,7 @@ export interface Player {
   providedIn: 'root',
 })
 export class GameService {
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore) { }
 
   getCurrentGame(): Observable<any> {
     return this.firestore
@@ -41,20 +41,25 @@ export class GameService {
 
   getPlayers(): Observable<DocumentChangeAction<Player>[]> {
     return this.firestore
-      .collection<Player>('players', ref =>
-        ref.orderBy('elo', 'desc').orderBy('tag'),
-      )
+      .collection<Player>('players', ref => ref.orderBy('elo', 'desc').orderBy('tag'))
       .snapshotChanges();
   }
 
-  deletePlayer(player) {
+  deletePlayer(player: DocumentChangeAction<Player>): Promise<void> {
     return this.firestore
-      .collection('players')
+      .collection<Player>('players')
       .doc(player.payload.doc.id)
       .delete();
   }
 
-  addPlayer(player): Promise<firebase.firestore.DocumentReference> {
+  addPlayer(player: Player): Promise<firebase.firestore.DocumentReference> {
     return this.firestore.collection<Player>('players').add(player);
+  }
+
+  updatePlayer(player: DocumentChangeAction<Player>, newValues: Player) {
+    return this.firestore
+      .collection<Player[]>('players')
+      .doc<Player>(player.payload.doc.id)
+      .update(newValues);
   }
 }

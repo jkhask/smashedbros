@@ -9,14 +9,17 @@ import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AddPlayerComponent } from './add-player/add-player.component';
+import { ConfirmComponent } from './confirm/confirm.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AddPlayerComponent
+    AddPlayerComponent,
+    ConfirmComponent
   ],
   entryComponents: [
-    AddPlayerComponent
+    AddPlayerComponent,
+    ConfirmComponent
   ],
   imports: [
     BrowserModule,
