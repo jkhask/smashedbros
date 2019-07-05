@@ -86,26 +86,35 @@ export class AppComponent implements OnInit {
 
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer !== event.container) {
-      const { doc } = event.previousContainer.data[event.previousIndex].payload;
-      this.combatants.push(doc.data());
-      const values: any = {};
-      if (this.combatants.length === 1) {
-        values.player1 = doc.data().tag;
-        values.scorePlayer1 = 0;
-      } else if (this.combatants.length === 2) {
-        values.player2 = doc.data().tag;
-        values.scorePlayer2 = 0;
-      }
-      this.game.updateMatch(values);
+      const player = event.previousContainer.data[event.previousIndex];
+      this.addPlayerToArena(player);
     }
   }
 
+  addPlayerToArena(player: DocumentChangeAction<Player>) {
+    this.combatants.push(player.payload.doc.data());
+    const values: any = {};
+    if (this.combatants.length === 1) {
+      values.player1 = player.payload.doc.data().tag;
+      values.scorePlayer1 = 0;
+    } else if (this.combatants.length === 2) {
+      values.player2 = player.payload.doc.data().tag;
+      values.scorePlayer2 = 0;
+    }
+    this.game.updateActiveMatch(values)
+      .catch(err => {
+        this.snackBar.open('Log In to edit active match.', 'Ok', {
+          duration: 3000,
+        });
+      });
+  }
+
   async clearActiveMatch() {
-    await this.game.updateMatch({ scorePlayer1: 0, scorePlayer2: 0, player1: '', player2: '' });
+    await this.game.updateActiveMatch({ scorePlayer1: 0, scorePlayer2: 0, player1: '', player2: '' });
   }
 
   async onScoreUpdate() {
-    await this.game.updateMatch({ scorePlayer1: this.match.scorePlayer1, scorePlayer2: this.match.scorePlayer2 });
+    await this.game.updateActiveMatch({ scorePlayer1: this.match.scorePlayer1, scorePlayer2: this.match.scorePlayer2 });
   }
 
   async storeMatch() {

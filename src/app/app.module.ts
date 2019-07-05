@@ -10,7 +10,6 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AddPlayerComponent } from './add-player/add-player.component';
 import { ConfirmComponent } from './confirm/confirm.component';
-import { ArenaComponent } from './arena/arena.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
@@ -18,7 +17,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     AppComponent,
     AddPlayerComponent,
     ConfirmComponent,
-    ArenaComponent,
   ],
   entryComponents: [
     AddPlayerComponent,

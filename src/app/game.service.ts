@@ -4,7 +4,7 @@ import {
   DocumentChangeAction,
 } from '@angular/fire/firestore';
 import { firestore } from 'firebase/app';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { Observable, combineLatest, of } from 'rxjs';
 
 export interface Player {
@@ -41,7 +41,7 @@ export class GameService {
     return this.afs.collection<Match>('matches').add(match);
   }
 
-  updateMatch(values): Promise<void> {
+  updateActiveMatch(values): Promise<void> {
     return this.afs
       .collection('matches')
       .doc('activeMatch')
