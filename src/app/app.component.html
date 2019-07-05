@@ -1,18 +1,24 @@
 <mat-toolbar>
   <span>Smashed Bros</span>
   <span class="spacer"></span>
-  <button mat-button id="add-player" (click)="openAddPlayer()">
+  <button mat-button id="add-player" (click)="openAddPlayer()" *ngIf="auth.user$ | async">
     <mat-icon>add</mat-icon><span>Add Player</span>
+  </button>
+  <button mat-button (click)="auth.signOut()" *ngIf="(auth.user$ | async)?.uid">
+    <mat-icon>person</mat-icon><span>Log Out</span>
+  </button>
+  <button mat-button (click)="auth.googleSignin()" *ngIf="!(auth.user$ | async)?.uid">
+    <mat-icon>person</mat-icon><span>Log In</span>
   </button>
 </mat-toolbar>
 <div class="content-wrapper">
-  <div class="players">
-    <mat-card class="player" *ngFor="let player of players$ | async">
+  <div class="players" cdkDropList #playerList="cdkDropList" [cdkDropListData]="players$ | async"
+    [cdkDropListConnectedTo]="[arena]" (cdkDropListDropped)="drop($event)">
+    <mat-card class="player" *ngFor="let player of players$ | async" cdkDrag>
       <mat-card-header>
         <div mat-card-avatar
           [style.background-image]="'url(assets/smash-icons/'+ player.payload.doc.data().main.icon+ '.png)'"
-          [matTooltip]="player.payload.doc.data().main.name"
-          matTooltipPosition="above">
+          [matTooltip]="player.payload.doc.data().main.name" matTooltipPosition="above">
         </div>
         <mat-card-title>{{ player.payload.doc.data().tag }}
         </mat-card-title>
@@ -20,21 +26,52 @@
       </mat-card-header>
       <mat-card-content>
         <mat-chip-list>
-          <mat-chip>{{ player.payload.doc.data().elo }}</mat-chip>
+          <mat-chip>{{ player.payload.doc.data().elo | number:'.0-0' }}</mat-chip>
         </mat-chip-list>
         <div class="buttons">
-          <button mat-icon-button (click)="openAddPlayer(player)">
+          <button mat-icon-button color="primary" (click)="openAddPlayer(player)"
+            [disabled]="!(auth.user$ | async)?.uid">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button (click)="confirmDeletePlayer(player)">
+          <button mat-icon-button color="warn" (click)="confirmDeletePlayer(player)"
+            [disabled]="!(auth.user$ | async)?.uid">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
       </mat-card-content>
-      <mat-card-actions>
-
-      </mat-card-actions>
     </mat-card>
+  </div>
+  <div class="arena" cdkDropList #arena="cdkDropList" [cdkDropListData]="combatants"
+    [cdkDropListConnectedTo]="[playerList]" (cdkDropListDropped)="drop($event)">
+
+    <mat-card class="player" *ngFor="let player of combatants$ | async; let i = index" cdkDrag>
+      <mat-card-header>
+        <div mat-card-avatar
+          [style.background-image]="'url(assets/smash-icons/'+ player.payload.doc.data().main.icon+ '.png)'"
+          [matTooltip]="player.payload.doc.data().main.name" matTooltipPosition="above">
+        </div>
+        <mat-card-title-group>
+          <mat-card-title>{{ player.payload.doc.data().tag }}
+          </mat-card-title>
+          <mat-card-subtitle>{{ player.payload.doc.data().name }}</mat-card-subtitle>
+        </mat-card-title-group>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-list>
+          <mat-chip>{{ player.payload.doc.data().elo | number:'.0-0' }}</mat-chip>
+        </mat-chip-list>
+        <mat-form-field class="score">
+          <input matInput type="number" *ngIf="i == 0" [(ngModel)]="match.scorePlayer1" (ngModelChange)="onScoreUpdate($event)">
+          <input matInput type="number" *ngIf="i == 1" [(ngModel)]="match.scorePlayer2" (ngModelChange)="onScoreUpdate($event)">
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+    <div class="buttons" *ngIf="(combatants$ | async)?.length === 2">
+      <button mat-raised-button (click)="clearActiveMatch()">Clear</button>
+      <button mat-raised-button color="accent" (click)="storeMatch()"
+        [disabled]="match.scorePlayer1 + match.scorePlayer2 <= 0 || match.scorePlayer1 == match.scorePlayer2">
+        Finalize Match</button>
+    </div>
   </div>
   <!-- <form [formGroup]="gameInput" (ngSubmit)="submit()">
     <mat-form-field>

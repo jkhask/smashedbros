@@ -61,6 +61,7 @@ export class AddPlayerComponent implements OnInit {
   }
 
   async submit() {
+    let closeMessage = 'added';
     const incomingPlayer: Player = {
       name: this.playerForm.get('name').value,
       tag: this.playerForm.get('tag').value,
@@ -73,10 +74,11 @@ export class AddPlayerComponent implements OnInit {
     if (this.data.player) { // player info was sent into modal, we are doing an edit
       delete incomingPlayer.elo;
       await this.game.updatePlayer(this.data.player, incomingPlayer);
+      closeMessage = 'updated';
     } else {
       await this.game.addPlayer(incomingPlayer);
     }
-    this.dialogRef.close();
+    this.dialogRef.close(closeMessage);
   }
 
   filterFighters(e) {
