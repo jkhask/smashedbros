@@ -68,14 +68,14 @@
           <mat-chip>{{ player.payload.doc.data().elo | number:'.0-0' }}</mat-chip>
         </mat-chip-list>
         <mat-form-field class="score">
-          <input matInput type="number" *ngIf="i == 0" [(ngModel)]="match.scorePlayer1"
+          <input matInput type="number" pattern="\d*" *ngIf="i == 0" [(ngModel)]="match.scorePlayer1"
             (ngModelChange)="onScoreUpdate($event)">
-          <input matInput type="number" *ngIf="i == 1" [(ngModel)]="match.scorePlayer2"
+          <input matInput type="number" pattern="\d*" *ngIf="i == 1" [(ngModel)]="match.scorePlayer2"
             (ngModelChange)="onScoreUpdate($event)">
         </mat-form-field>
       </mat-card-content>
     </mat-card>
-    <div class="buttons" *ngIf="(combatants$ | async)?.length === 2">
+    <div class="buttons" *ngIf="(combatants$ | async)?.length > 0">
       <button mat-raised-button (click)="clearActiveMatch()">Clear</button>
       <button mat-raised-button color="accent" (click)="storeMatch()"
         [disabled]="match.scorePlayer1 + match.scorePlayer2 <= 0 || match.scorePlayer1 == match.scorePlayer2">

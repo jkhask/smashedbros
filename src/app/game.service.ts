@@ -6,6 +6,7 @@ import {
 import { firestore } from 'firebase/app';
 import { switchMap } from 'rxjs/operators';
 import { Observable, combineLatest, of } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface Player {
   name: string;
@@ -20,6 +21,7 @@ export interface Match {
   scorePlayer1: number;
   scorePlayer2: number;
   time: firestore.FieldValue;
+  createdBy: string;
 }
 
 @Injectable({
@@ -27,7 +29,7 @@ export interface Match {
 })
 export class GameService {
 
-  constructor(private afs: AngularFirestore) { }
+  constructor(private afs: AngularFirestore, private auth: AuthService) { }
 
   getActiveMatch(): Observable<any> {
     return this.afs
@@ -36,8 +38,9 @@ export class GameService {
       .valueChanges();
   }
 
-  addMatch(match: Match): Promise<firebase.firestore.DocumentReference> {
+  async addMatch(match: Match): Promise<firebase.firestore.DocumentReference> {
     match.time = firestore.FieldValue.serverTimestamp();
+    match.createdBy = this.auth.user.uid;
     return this.afs.collection<Match>('matches').add(match);
   }
 
@@ -88,8 +91,8 @@ export class GameService {
     const k = 30; // elo constant
     let eloP1 = combatants[0].payload.doc.data().elo;
     let eloP2 = combatants[1].payload.doc.data().elo;
-    const prob1 = (1.0 / (1.0 + Math.pow(10, ((eloP1 - eloP2) / 400))));
-    const prob2 = (1.0 / (1.0 + Math.pow(10, ((eloP2 - eloP1) / 400))));
+    const prob1 = (1.0 / (1.0 + Math.pow(10, ((eloP2 - eloP1) / 400))));
+    const prob2 = (1.0 / (1.0 + Math.pow(10, ((eloP1 - eloP2) / 400))));
     if (match.winner === combatants[0].payload.doc.data().tag) {
       eloP1 = eloP1 + k * (1 - prob1);
       eloP2 = eloP2 + k * (0 - prob2);
