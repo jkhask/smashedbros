@@ -76,8 +76,8 @@ export class GameService {
       .delete();
   }
 
-  addPlayer(player: Player): Promise<firebase.firestore.DocumentReference> {
-    return this.afs.collection<Player>('players').add(player);
+  addPlayer(player: Player): Promise<void> {
+    return this.afs.collection<Player>('players').doc(player.tag).set(player);
   }
 
   updatePlayer(player: DocumentChangeAction<Player>, newValues: Player) {
