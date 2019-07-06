@@ -17,16 +17,16 @@
     <mat-card class="player" *ngFor="let player of players$ | async" cdkDrag>
       <mat-card-header>
         <div mat-card-avatar
-          [style.background-image]="'url(assets/smash-icons/'+ player.payload.doc.data().main.icon+ '.png)'"
-          [matTooltip]="player.payload.doc.data().main.name" matTooltipPosition="above">
+          [style.background-image]="'url(assets/smash-icons/'+ player.main.icon+ '.png)'"
+          [matTooltip]="player.main.name" matTooltipPosition="above">
         </div>
-        <mat-card-title>{{ player.payload.doc.data().tag }}
+        <mat-card-title>{{ player.tag }}
         </mat-card-title>
-        <mat-card-subtitle>{{ player.payload.doc.data().name }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ player.name }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <mat-chip-list>
-          <mat-chip>{{ player.payload.doc.data().elo | number:'.0-0' }}</mat-chip>
+          <mat-chip>{{ player.elo | number:'.0-0' }}</mat-chip>
         </mat-chip-list>
         <div class="buttons">
           <button mat-icon-button color="accent" (click)="openAddPlayer(player)"
@@ -54,18 +54,18 @@
     <mat-card class="player" *ngFor="let player of combatants$ | async; let i = index" cdkDrag>
       <mat-card-header>
         <div mat-card-avatar
-          [style.background-image]="'url(assets/smash-icons/'+ player.payload.doc.data().main.icon+ '.png)'"
-          [matTooltip]="player.payload.doc.data().main.name" matTooltipPosition="above">
+          [style.background-image]="'url(assets/smash-icons/'+ player.main.icon+ '.png)'"
+          [matTooltip]="player.main.name" matTooltipPosition="above">
         </div>
         <mat-card-title-group>
-          <mat-card-title>{{ player.payload.doc.data().tag }}
+          <mat-card-title>{{ player.tag }}
           </mat-card-title>
-          <mat-card-subtitle>{{ player.payload.doc.data().name }}</mat-card-subtitle>
+          <mat-card-subtitle>{{ player.name }}</mat-card-subtitle>
         </mat-card-title-group>
       </mat-card-header>
       <mat-card-content>
         <mat-chip-list>
-          <mat-chip>{{ player.payload.doc.data().elo | number:'.0-0' }}</mat-chip>
+          <mat-chip>{{ player.elo | number:'.0-0' }}</mat-chip>
         </mat-chip-list>
         <mat-form-field class="score">
           <input matInput type="number" pattern="\d*" *ngIf="i == 0" [(ngModel)]="match.scorePlayer1"
@@ -80,6 +80,18 @@
       <button mat-raised-button color="accent" (click)="storeMatch()"
         [disabled]="match.scorePlayer1 + match.scorePlayer2 <= 0 || match.scorePlayer1 == match.scorePlayer2">
         Finalize Match</button>
+    </div>
+  </div>
+  <div class="player-window-wrapper" *ngIf="!isMobileDevice()">
+    <div class="player-window">
+      <div class="player-one">
+        <span class="score">{{this.match.scorePlayer1}}</span>
+        <span class="name">{{this.match.player1}}</span>
+      </div>
+      <div class="player-two">
+        <span class="score">{{this.match.scorePlayer2}}</span>
+        <span class="name">{{this.match.player2}}</span>
+      </div>
     </div>
   </div>
 </div>

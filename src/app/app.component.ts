@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
 
   gameInput: FormGroup;
   gameInfo: any;
-  players$: Observable<DocumentChangeAction<Player>[]>;
+  players$: Observable<Player[]>;
   match: any = {};
   combatants$: Observable<any>;
   combatants: any = [];
@@ -91,14 +91,14 @@ export class AppComponent implements OnInit {
     }
   }
 
-  addPlayerToArena(player: DocumentChangeAction<Player>) {
-    this.combatants.push(player.payload.doc.data());
+  addPlayerToArena(player: Player) {
+    this.combatants.push(player);
     const values: any = {};
     if (this.combatants.length === 1) {
-      values.player1 = player.payload.doc.data().tag;
+      values.player1 = player.tag;
       values.scorePlayer1 = 0;
     } else if (this.combatants.length === 2) {
-      values.player2 = player.payload.doc.data().tag;
+      values.player2 = player.tag;
       values.scorePlayer2 = 0;
     }
     this.game.updateActiveMatch(values)
@@ -131,6 +131,10 @@ export class AppComponent implements OnInit {
     this.snackBar.open('Match saved.', 'Ok', {
       duration: 3000,
     });
+  }
+
+  isMobileDevice() {
+    return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
   }
 
 }

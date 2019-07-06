@@ -51,17 +51,15 @@ export class GameService {
       .update(values);
   }
 
-  getPlayers(): Observable<DocumentChangeAction<Player>[]> {
+  getPlayers(): Observable<Player[]> {
     return this.afs
-      .collection<Player>('players'
-        // , ref => ref.orderBy('elo', 'desc').orderBy('tag')
-      )
-      .snapshotChanges();
+      .collection<Player>('players', ref => ref.orderBy('elo', 'desc').orderBy('tag'))
+      .valueChanges();
   }
 
   getCombatants(match) {
-    const p1$ = this.afs.collection<Player>('players', ref => ref.where('tag', '==', match.player1)).snapshotChanges();
-    const p2$ = this.afs.collection<Player>('players', ref => ref.where('tag', '==', match.player2)).snapshotChanges();
+    const p1$ = this.afs.collection<Player>('players', ref => ref.where('tag', '==', match.player1)).valueChanges();
+    const p2$ = this.afs.collection<Player>('players', ref => ref.where('tag', '==', match.player2)).valueChanges();
     return combineLatest(p1$, p2$).pipe(switchMap((combatants: any) => {
       const [p1, p2] = combatants;
       const combined = [...p1, ...p2];
@@ -80,20 +78,20 @@ export class GameService {
     return this.afs.collection<Player>('players').doc(player.tag).set(player);
   }
 
-  updatePlayer(player: DocumentChangeAction<Player>, newValues: Player) {
+  updatePlayer(player: Player, newValues: Player) {
     return this.afs
       .collection<Player[]>('players')
-      .doc<Player>(player.payload.doc.id)
+      .doc<Player>(player.tag)
       .update(newValues);
   }
 
   computeElo(combatants, match) {
     const k = 30; // elo constant
-    let eloP1 = combatants[0].payload.doc.data().elo;
-    let eloP2 = combatants[1].payload.doc.data().elo;
+    let eloP1 = combatants[0].elo;
+    let eloP2 = combatants[1].elo;
     const prob1 = (1.0 / (1.0 + Math.pow(10, ((eloP2 - eloP1) / 400))));
     const prob2 = (1.0 / (1.0 + Math.pow(10, ((eloP1 - eloP2) / 400))));
-    if (match.winner === combatants[0].payload.doc.data().tag) {
+    if (match.winner === combatants[0].tag) {
       eloP1 = eloP1 + k * (1 - prob1);
       eloP2 = eloP2 + k * (0 - prob2);
     } else {
@@ -102,11 +100,11 @@ export class GameService {
     }
     this.afs
       .collection<Player[]>('players')
-      .doc<Player>(combatants[0].payload.doc.id)
+      .doc<Player>(combatants[0].tag)
       .update({ elo: eloP1 });
     this.afs
       .collection<Player[]>('players')
-      .doc<Player>(combatants[1].payload.doc.id)
+      .doc<Player>(combatants[1].tag)
       .update({ elo: eloP2 });
   }
 }

@@ -73,6 +73,34 @@
             justify-content: space-around;
         }
     }
+    .player-window-wrapper{
+        width: 1111px;
+        height: 37px;
+    }
+    .player-window {
+        width: 1111px;
+        height: 37px;
+        background-image: url('../assets/img/playerBackdrop.png');
+        color: #fff;
+        font-size: 24px;
+        position: absolute;
+        .player-one {
+            position: relative;
+            top: 6px;
+            left: 60px;
+            .name {
+                margin-left: 40px;
+            }
+        }
+        .player-two {
+            position: relative;
+            top: -22px;
+            left: 805px;
+            .name {
+                margin-left: 40px;
+            }
+        }
+    }
 
     form {
         max-width: 800px;
