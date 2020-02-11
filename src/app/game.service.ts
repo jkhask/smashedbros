@@ -67,10 +67,10 @@ export class GameService {
     }));
   }
 
-  deletePlayer(player: DocumentChangeAction<Player>): Promise<void> {
+  deletePlayer(player: Player): Promise<void> {
     return this.afs
       .collection<Player>('players')
-      .doc(player.payload.doc.id)
+      .doc(player.tag)
       .delete();
   }
 
